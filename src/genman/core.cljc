@@ -27,7 +27,7 @@
 (defmacro gen
   ([spec] `(gen ~spec {}))
   ([spec overrides]
-   `(let [overrides# (merge ~(if (get #?(:clj &env
+   `(let [overrides# (merge ~(if (get #?(:clj (or (:locals &env) &env)
                                          :cljs (:locals &env))
                                       GENERATORS_SYM)
                                GENERATORS_SYM
