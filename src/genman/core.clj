@@ -14,12 +14,20 @@
                (fn [] ~generator))
         '~spec-name-or-path)))
 
+(defprotocol ToGenGroup
+  (->gen-group [this]))
+
+(extend-protocol ToGenGroup
+  clojure.lang.Keyword
+  (->gen-group [key]
+    (get @%gen-groups key {})))
+
 (defmacro with-gen-group [gen-group & body]
   `(binding [*gen-group* ~gen-group]
      ~@body))
 
 (defmacro use-gen-group [gen-group & body]
-  `(let [~GENERATORS_SYM (get @%gen-groups ~gen-group {})]
+  `(let [~GENERATORS_SYM (->gen-group ~gen-group)]
      ~@body))
 
 (defmacro gen
@@ -27,6 +35,6 @@
   ([spec overrides]
    `(let [overrides# (merge ~(if (get &env GENERATORS_SYM)
                                GENERATORS_SYM
-                               `(get @%gen-groups *gen-group* {}))
+                               `(->gen-group *gen-group*))
                             ~overrides)]
       (s/gen ~spec overrides#))))
