@@ -48,7 +48,7 @@ Once a generator is defined using `defgenerator`, you can use it with `genman/ge
 
 ### `with-gen-group` / `use-gen-group`
 
-In addition, Genman provieds switching mechanism between multiple generator implementations for a single spec. To use this facility, a generator should be defined in a **generator group**. In the example below, two more implementations for each `::id` and `::name` are being defined in the generator groups named `:dev` and `test`:
+In addition, Genman provieds switching mechanism between multiple generator implementations for a single spec. To use this facility, a generator should be defined in a **generator group**. In the example below, two more implementations for each `::id` and `::name` are being defined in the generator groups named `:dev` and `:test`:
 
 ```clj
 (genman/with-gen-group :dev
@@ -78,7 +78,7 @@ And then, specify the generator group to use those specific implementations:
 ;; => [101 "bar"]
 ```
 
-Note that `with-gen-group` uses dynamic var binding under the hood, once a generator got out of that scope, it would lose the effect of specifying the generator group:
+Note that since `with-gen-group` uses dynamic var binding under the hood, once a generator got out of that scope, it could lose the effect of specifying the generator group:
 
 ```clj
 (def g
@@ -106,7 +106,7 @@ To avoid this behavior, use `use-gen-group` instead:
 ;; => [42 "foo"]
 ```
 
-As a rule of thumb, `with-gen-group` works well for test fixture, and `use-gen-group` suits for use in each (property-based) test case.
+As a rule of thumb, `with-gen-group` works well for test fixtures, and `use-gen-group` suits for use in each (property-based) test case.
 
 ## License
 
