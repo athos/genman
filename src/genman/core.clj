@@ -10,9 +10,12 @@
   ([spec-name-or-path generator]
    `(defgenerator *gen-group* ~spec-name-or-path ~generator))
   ([gen-group spec-name-or-path generator]
-   `(do (swap! %gen-groups assoc-in [~gen-group '~spec-name-or-path]
-               (fn [] ~generator))
-        '~spec-name-or-path)))
+   `(let [gen-group# ~gen-group
+          spec-name# '~spec-name-or-path]
+      (assert (keyword? gen-group#) "gen-group must be keyword")
+      (swap! %gen-groups assoc-in [gen-group# spec-name#]
+             (fn [] ~generator))
+      spec-name#)))
 
 (defprotocol ToGenGroup
   (->gen-group [this]))
