@@ -3,4 +3,8 @@
         org.clojure/clojurescript {:mvn/version "1.9.946"}}
  :aliases
  {:test {:extra-paths ["test"]
-         :extra-deps {com.gfredericks/test.chuck {:mvn/version "0.2.8"}}}}}
+         :extra-deps {com.cognitect/test-runner
+                      {:git/url "git@github.com:cognitect-labs/test-runner"
+                       :sha "5fb4fc46ad0bf2e0ce45eba5b9117a2e89166479"}
+                      com.gfredericks/test.chuck {:mvn/version "0.2.8"}}
+         :main-opts ["-m" "cognitect.test-runner"]}}}
