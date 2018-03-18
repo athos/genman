@@ -46,3 +46,12 @@
               name (genman/gen ::name)]
       (is (contains? #{0 1 2} id))
       (is (= (count name) 5)))))
+
+(defspec prop-test2-gen-group-adhoc-override
+  (let [gen-group (genman/merge-groups :test2
+                                       {::name #(gen/return "bar")})]
+    (genman/use-gen-group gen-group
+      (for-all [id (genman/gen ::id)
+                name (genman/gen ::name)]
+        (is (contains? #{0 1 2} id))
+        (is (= name "bar"))))))

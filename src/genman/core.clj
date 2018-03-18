@@ -20,7 +20,15 @@
 (extend-protocol ToGenGroup
   clojure.lang.Keyword
   (->gen-group [key]
-    (get @%gen-groups key {})))
+    (get @%gen-groups key {}))
+
+  clojure.lang.IPersistentMap
+  (->gen-group [map] map))
+
+(defrecord Merge [gen-groups]
+  ToGenGroup
+  (->gen-group [this]
+    (into {} (map ->gen-group) gen-groups)))
 
 (defmacro with-gen-group [gen-group & body]
   `(binding [*gen-group* ~gen-group]
@@ -29,6 +37,9 @@
 (defmacro use-gen-group [gen-group & body]
   `(let [~GENERATORS_SYM (->gen-group ~gen-group)]
      ~@body))
+
+(defn merge-groups [& gen-groups]
+  (->Merge gen-groups))
 
 (defmacro gen
   ([spec] `(gen ~spec {}))
