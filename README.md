@@ -1,4 +1,5 @@
 # genman
+[![CircleCI](https://circleci.com/gh/athos/genman.svg?style=shield)](https://circleci.com/gh/athos/genman)
 
 Generator management utility for clojure.spec
 
