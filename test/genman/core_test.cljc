@@ -1,10 +1,15 @@
 (ns genman.core-test
-  (:require [clojure.test :refer [is]]
-            [clojure.test.check.generators :as gen]
-            [clojure.test.check.clojure-test :refer [defspec]]
-            [com.gfredericks.test.chuck.clojure-test :refer [for-all]]
-            [clojure.spec.alpha :as s]
-            [genman.core :as genman :refer [defgenerator]]))
+  (:require
+   [clojure.spec.alpha :as s]
+   [clojure.test :refer [is]]
+   [clojure.test.check.generators :as gen]
+   #?@(:clj
+       ([clojure.test.check.clojure-test :refer [defspec]]
+        [com.gfredericks.test.chuck.clojure-test :refer [for-all]])
+       :cljs
+       ([clojure.test.check.clojure-test :refer-macros [defspec]]
+        [com.gfredericks.test.chuck.clojure-test :refer-macros [for-all]]))
+   [genman.core :as genman :refer [defgenerator]]))
 
 (s/def ::id int?)
 (s/def ::name string?)
