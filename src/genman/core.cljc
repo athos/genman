@@ -1,54 +1,46 @@
 (ns genman.core
-  (:require [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as s]
+            [genman.internal :as internal]
+            [genman.protocols :as proto]))
 
-(def %gen-groups (atom {}))
-(def ^:dynamic *gen-group* :default)
-
-(def GENERATORS_SYM (gensym 'generators))
+(def ^:private GENERATORS_SYM (gensym 'generators))
 
 (defmacro defgenerator
   ([spec-name-or-path generator]
-   `(defgenerator *gen-group* ~spec-name-or-path ~generator))
+   `(defgenerator internal/*gen-group* ~spec-name-or-path ~generator))
   ([gen-group spec-name-or-path generator]
    `(let [gen-group# ~gen-group
           spec-name# '~spec-name-or-path]
       (assert (keyword? gen-group#) "gen-group must be keyword")
-      (swap! %gen-groups assoc-in [gen-group# spec-name#]
+      (swap! internal/%gen-groups assoc-in [gen-group# spec-name#]
              (fn [] ~generator))
       spec-name#)))
 
-(defprotocol ToGenGroup
-  (->gen-group [this]))
-
-(extend-protocol ToGenGroup
-  clojure.lang.Keyword
-  (->gen-group [key]
-    (get @%gen-groups key {}))
-
-  clojure.lang.IPersistentMap
-  (->gen-group [map] map))
-
-(defrecord Merge [gen-groups]
-  ToGenGroup
-  (->gen-group [this]
-    (into {} (map ->gen-group) gen-groups)))
-
 (defmacro with-gen-group [gen-group & body]
-  `(binding [*gen-group* ~gen-group]
+  `(binding [internal/*gen-group* ~gen-group]
      ~@body))
 
 (defmacro use-gen-group [gen-group & body]
-  `(let [~GENERATORS_SYM (->gen-group ~gen-group)]
+  `(let [~GENERATORS_SYM (proto/->gen-group ~gen-group)]
      ~@body))
-
-(defn merge-groups [& gen-groups]
-  (->Merge gen-groups))
 
 (defmacro gen
   ([spec] `(gen ~spec {}))
   ([spec overrides]
-   `(let [overrides# (merge ~(if (get &env GENERATORS_SYM)
+   `(let [overrides# (merge ~(if (get #?(:clj &env
+                                         :cljs (:locals &env))
+                                      GENERATORS_SYM)
                                GENERATORS_SYM
-                               `(->gen-group *gen-group*))
+                               `(proto/->gen-group internal/*gen-group*))
                             ~overrides)]
       (s/gen ~spec overrides#))))
+
+#?(:clj
+   (defrecord Merge [gen-groups]
+     proto/ToGenGroup
+     (->gen-group [this]
+       (into {} (map proto/->gen-group) gen-groups))))
+
+#?(:clj
+   (defn merge-groups [& gen-groups]
+     (->Merge gen-groups)))
