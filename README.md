@@ -78,6 +78,8 @@ And then, specify the generator group to use those specific implementations:
 ;; => [101 "bar"]
 ```
 
+If no generator group is specified, `genman/gen` and `defgenerator` will behave as if the `:default` generator group were specified.
+
 Note that since `with-gen-group` uses dynamic var binding under the hood, once a generator got out of that scope, it could lose the effect of specifying the generator group:
 
 ```clj
