@@ -6,7 +6,8 @@ Generator management utility for clojure.spec
 
 ## Features
 
-- Enables generator definitions isolate from the spec definition
+- Generator definitions isolate from spec definitions
+    - No more need to mess up your spec definition with a huge `s/with-gen` code!
 - Provides switching mechanism between multiple generator implementations for a single spec
 
 ## Installation
