@@ -5,3 +5,6 @@
 
 (defn merge-groups [& gen-groups]
   (proto/->Merge gen-groups))
+
+(defn extend-group [gen-group extension]
+  (proto/->Extend gen-group extension))

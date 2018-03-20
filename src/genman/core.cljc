@@ -38,3 +38,7 @@
 #?(:clj
    (defn merge-groups [& gen-groups]
      (proto/->Merge gen-groups)))
+
+#?(:clj
+   (defn extend-group [gen-group extension]
+     (proto/->Extend gen-group extension)))
