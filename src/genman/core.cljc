@@ -36,6 +36,10 @@
       (s/gen ~spec overrides#))))
 
 #?(:clj
+   (defn ->overrides-map [gen-group]
+     (proto/->overrides-map* gen-group)))
+
+#?(:clj
    (defn merge-groups [& gen-groups]
      (proto/->Merge gen-groups)))
 
