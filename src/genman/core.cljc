@@ -21,7 +21,7 @@
      ~@body))
 
 (defmacro use-gen-group [gen-group & body]
-  `(let [~GENERATORS_SYM (proto/->gen-group ~gen-group)]
+  `(let [~GENERATORS_SYM (->overrides-map ~gen-group)]
      ~@body))
 
 (defmacro gen
@@ -31,7 +31,7 @@
                                          :cljs (:locals &env))
                                       GENERATORS_SYM)
                                GENERATORS_SYM
-                               `(proto/->gen-group internal/*gen-group*))
+                               `(->overrides-map internal/*gen-group*))
                             ~overrides)]
       (s/gen ~spec overrides#))))
 

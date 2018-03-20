@@ -2,28 +2,28 @@
   (:require [clojure.spec.alpha :as s]
             [genman.internal :as internal]))
 
-(defprotocol ToGenGroup
-  (->gen-group [this]))
+(defprotocol ToOverridesMap
+  (->overrides-map* [this]))
 
-(extend-protocol ToGenGroup
+(extend-protocol ToOverridesMap
   #?(:clj clojure.lang.Keyword
      :cljs cljs.core/Keyword)
-  (->gen-group [key]
+  (->overrides-map* [key]
     (get @internal/%gen-groups key {}))
 
   #?(:clj Object
      :cljs default)
-  (->gen-group [map] map))
+  (->overrides-map* [map] map))
 
 (defrecord Merge [gen-groups]
-  ToGenGroup
-  (->gen-group [this]
-    (into {} (map ->gen-group) gen-groups)))
+  ToOverridesMap
+  (->overrides-map* [this]
+    (into {} (map ->overrides-map*) gen-groups)))
 
 (defrecord Extend [gen-group extension]
-  ToGenGroup
-  (->gen-group [this]
-    (let [base (->gen-group gen-group)]
+  ToOverridesMap
+  (->overrides-map* [this]
+    (let [base (->overrides-map* gen-group)]
       (reduce-kv (fn [m k f]
                    (let [g (if-let [gen-fn (get base k)]
                              (gen-fn)
