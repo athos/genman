@@ -36,11 +36,5 @@
       (s/gen ~spec overrides#))))
 
 #?(:clj
-   (defrecord Merge [gen-groups]
-     proto/ToGenGroup
-     (->gen-group [this]
-       (into {} (map proto/->gen-group) gen-groups))))
-
-#?(:clj
    (defn merge-groups [& gen-groups]
-     (->Merge gen-groups)))
+     (proto/->Merge gen-groups)))

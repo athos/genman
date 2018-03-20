@@ -13,3 +13,8 @@
   #?(:clj Object
      :cljs default)
   (->gen-group [map] map))
+
+(defrecord Merge [gen-groups]
+  ToGenGroup
+  (->gen-group [this]
+    (into {} (map ->gen-group) gen-groups)))
