@@ -16,6 +16,12 @@
              (fn [] ~generator))
       spec-name#)))
 
+(defmacro def-gen-group [name gen-group]
+  `(let [group-name# '~name]
+     (swap! internal/%gen-groups assoc group-name#
+            (->overrides-map ~gen-group))
+     group-name#))
+
 (defmacro with-gen-group [gen-group & body]
   `(binding [internal/*gen-group* ~gen-group]
      ~@body))
