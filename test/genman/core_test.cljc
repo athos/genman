@@ -9,7 +9,7 @@
        :cljs
        ([clojure.test.check.clojure-test :refer-macros [defspec]]
         [com.gfredericks.test.chuck.clojure-test :refer-macros [for-all]]))
-   [genman.core :as genman :refer [defgenerator]]))
+   [genman.core :as genman :refer [defgenerator def-gen-group]]))
 
 (s/def ::id int?)
 (s/def ::name string?)
@@ -32,6 +32,12 @@
     (gen/fmap #(apply str %)
               (s/gen (s/coll-of char? :count 5)))))
 
+(def-gen-group :test3
+  (genman/merge-groups :test2 {::name #(gen/return "bar")}))
+
+(def-gen-group :test4
+  (genman/extend-group :test1 {::id #(gen/fmap inc %)}))
+
 (defspec prop-default-gen-group
   (for-all [id (genman/gen ::id)
             name (genman/gen ::name)]
@@ -52,11 +58,16 @@
       (is (contains? #{0 1 2} id))
       (is (= (count name) 5)))))
 
-(defspec prop-test2-gen-group-adhoc-override
-  (let [gen-group (genman/merge-groups :test2
-                                       {::name #(gen/return "bar")})]
-    (genman/use-gen-group gen-group
-      (for-all [id (genman/gen ::id)
-                name (genman/gen ::name)]
-        (is (contains? #{0 1 2} id))
-        (is (= name "bar"))))))
+(defspec prop-test3-gen-group
+  (genman/use-gen-group :test3
+    (for-all [id (genman/gen ::id)
+              name (genman/gen ::name)]
+      (is (contains? #{0 1 2} id))
+      (is (= name "bar")))))
+
+(defspec prop-test4-gen-group
+  (genman/use-gen-group :test4
+    (for-all [id (genman/gen ::id)
+              name (genman/gen ::name)]
+      (is (= id 43))
+      (is (= name "foo")))))
