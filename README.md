@@ -6,8 +6,8 @@ Generator management utility for clojure.spec
 
 ## Features
 
-- Generator definitions isolate from spec definitions
-    - No more need to mess up your spec definition with a huge `s/with-gen` code!
+- Generator definitions isolated from spec definitions
+    - No more need to mess up your spec definition with a gigantic `s/with-gen` code!
 - Provides switching mechanism between multiple generator implementations for a single spec
 
 ## Installation
@@ -20,7 +20,7 @@ Add the following to your `:dependencies`:
 
 ### `defgenerator` / `gen`
 
-First, define generators which you want to use via Genman as follows:
+First, define a generator which you want to use via Genman as follows:
 
 ```clj
 (require '[clojure.spec.alpha :as s]
@@ -67,7 +67,7 @@ In addition, Genman provieds switching mechanism between multiple generator impl
     (gen/return "bar")))
 ```
 
-And then, specify the generator group to use those specific implementations:
+And then, specify the generator group with `with-gen-group` to choose those specific implementations:
 
 ```clj
 (genman/with-gen-group :dev
@@ -81,7 +81,7 @@ And then, specify the generator group to use those specific implementations:
 
 If no generator group is specified, `genman/gen` and `defgenerator` will behave as if the `:default` generator group were specified.
 
-Note that since `with-gen-group` uses dynamic var binding under the hood, once a generator got out of that scope, it could lose the effect of specifying the generator group:
+Note that since `with-gen-group` is built on top of dynamic var binding, once a generator got out of that scope, it could lose the effect of specifying the generator group:
 
 ```clj
 (def g
