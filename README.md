@@ -18,6 +18,10 @@ Add the following to your `:dependencies`:
 
 ## Usage
 
+- [`defgenerator` / `gen`](#defgenerator--gen)
+- [`with-gen-group` / `use-gen-group`](#with-gen-group--use-gen-group)
+- [`merge-groups` / `extend-group`](#merge-groups--extend-group)
+
 ### `defgenerator` / `gen`
 
 First, define a generator which you want to use via Genman as follows:
@@ -110,6 +114,45 @@ To avoid this behavior, use `use-gen-group` instead:
 ```
 
 As a rule of thumb, `with-gen-group` works well for test fixtures, and `use-gen-group` suits for use in each (property-based) test case.
+
+### `merge-groups` / `extend-group`
+
+Also, there are some ways to create a new generator group based on existing ones (which we call an *adhoc* generator group).
+
+`merge-groups` merges more than one generator groups (in the left-to-right manner as with `clojure.core/merge`):
+
+```clj
+(genman/with-gen-group :test1
+  (defgenerator ::id
+    (gen/return 42))
+    
+  (defgenerator ::name
+    (gen/return "foo")))
+
+(genman/with-gen-group :test2
+  (defgenerator ::name
+    (gen/return "bar")))
+    
+(genman/with-gen-group (genman/merge-groups :test1 :test2)
+  (gen/generate (genman/gen (s/tuple ::id ::name))))
+;; => [42 "bar"]
+```
+
+Or, you can simply pass a map, from spec name keys to fns returning a generator, to override an existing generator group:
+
+```clj
+(genman/with-gen-group (genman/merge-groups :test1 {::name #(gen/return "baz")})
+  (gen/generate (genman/gen (s/tuple ::id ::name))))
+;; => [42 "baz"]
+```
+
+If you would like to wrap the existing gererator implementation instead, `extend-group` would be useful:
+
+```clj
+(genman/with-gen-group (genman/extend-group :test1 {::id (fn [g] (gen/fmap #(* % 100) g))})
+  (gen/generate (genman/gen ::id)))
+;; => 4200
+```
 
 ## License
 
