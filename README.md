@@ -21,6 +21,7 @@ Add the following to your `:dependencies`:
 - [`defgenerator` / `gen`](#defgenerator--gen)
 - [`with-gen-group` / `use-gen-group`](#with-gen-group--use-gen-group)
 - [`merge-groups` / `extend-group`](#merge-groups--extend-group)
+- [`def-gen-group`](#def-gen-group)
 
 ### `defgenerator` / `gen`
 
@@ -153,6 +154,32 @@ If you would like to wrap the existing gererator implementation instead, `extend
   (gen/generate (genman/gen ::id)))
 ;; => 4200
 ```
+
+### `def-gen-group`
+
+Although adhoc generator groups have no need to have their own name, occasionally it's convenient to reference them with a fixed name to reuse them in several places. To define a name for an adhoc generator group, use `def-gen-group` as follows:
+
+```clj
+(require '[genman.core :as genman :refer [def-gen-group]])
+
+(genman/with-gen-group :dev
+  (defgenerator ::id
+    (s/gen #{0 1 2})))
+
+(def-gen-group :dev'
+  (genman/extend-group :dev
+    {::id (fn [g] (gen/such-that even? g))}))
+
+(genman/with-gen-group :dev'
+  (gen/generate (genman/gen ::id)))
+;; => 2
+
+(genman/with-gen-group :dev'
+  (gen/generate (genman/gen ::id)))
+;; => 0
+```
+
+A named adhoc generator group can be used in exactly the same way as ordinary generator groups.
 
 ## License
 
