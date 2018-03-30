@@ -54,7 +54,7 @@ Once a generator is defined using `defgenerator`, you can use it with `genman/ge
 
 ### `with-gen-group` / `use-gen-group`
 
-In addition, Genman provieds switching mechanism between multiple generator implementations for a single spec. To use this facility, a generator should be defined in a **generator group**. In the example below, two more implementations for each `::id` and `::name` are being defined in the generator groups named `:dev` and `:test`:
+In addition, Genman provides switching mechanism between multiple generator implementations for a single spec. To use this facility, a generator should be defined in a **generator group**. In the example below, two more implementations for each `::id` and `::name` are being defined in the generator groups named `:dev` and `:test`:
 
 ```clj
 (genman/with-gen-group :dev
