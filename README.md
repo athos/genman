@@ -147,7 +147,7 @@ Or, you can simply pass a map, from spec name keys to fns returning a generator,
 ;; => [42 "baz"]
 ```
 
-If you would like to wrap the existing gererator implementation instead, `extend-group` would be useful:
+If you would like to wrap the existing generator implementation instead, `extend-group` would be useful:
 
 ```clj
 (genman/with-gen-group (genman/extend-group :test1 {::id (fn [g] (gen/fmap #(* % 100) g))})
