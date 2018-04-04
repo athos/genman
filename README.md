@@ -22,6 +22,7 @@ Add the following to your `:dependencies`:
 - [`with-gen-group` / `use-gen-group`](#with-gen-group--use-gen-group)
 - [`merge-groups` / `extend-group`](#merge-groups--extend-group)
 - [`def-gen-group`](#def-gen-group)
+- [`->overrides-map`](#-overrides-map)
 
 ### `defgenerator` / `gen`
 
@@ -180,6 +181,33 @@ Although adhoc generator groups have no need to have their own name, occasionall
 ```
 
 A named adhoc generator group can be used in exactly the same way as ordinary generator groups.
+
+### `->overrides-map`
+
+Sometimes there are situations where you would like to cooperate with clojure.spec APIs such as `clojure.spec.test.alpha/check` and `clojure.spec.test.alpha/instrument`, enabling a generator group. In those cases, `->overrides-map` would do to make their `:gen` optional argument:
+
+```clj
+(require '[clojure.spec.test.alpha :as st])
+
+(s/def ::amount nat-int?)
+
+(defn double-amount [amount]
+  (* 2 amount))
+
+(s/fdef double-amount
+  :args (s/cat :amount ::amount)
+  :ret ::amount)
+
+(genman/with-gen-group :dev
+  (defgenerator ::amount
+    (s/gen (s/int-in 0 10000))))
+
+(st/check `double-amount)
+;; throws an ArithmeticException (integer overflow)
+
+(st/check `double-amount {:gen (genman/->overrides-map :dev)})
+;; pass the check
+```
 
 ## License
 
