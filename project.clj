@@ -1,4 +1,4 @@
-(defproject genman "0.2.0"
+(defproject genman "0.2.1-SNAPSHOT"
   :description "Generator management utility for clojure.spec"
   :url "https://github.com/athos/genman"
   :license {:name "Eclipse Public License"
